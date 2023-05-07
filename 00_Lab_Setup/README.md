@@ -11,5 +11,5 @@
 Create PS Session to server from Management Host
 
 ```
-New-PSSession -Computername 192.168.204.253 -Credentials (Get-credential)
+New-PSSession -Computername 192.168.204.253 -Credential (Get-credential)
 ```
