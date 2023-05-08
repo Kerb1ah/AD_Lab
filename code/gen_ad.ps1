@@ -28,8 +28,19 @@ function CreateADUser(){
     New-ADUser -Name "$name" -GivenName $firstname -Surname $lastname -SamAccountName $SamAccountName -UserPrincipalName $principalname@$Global:Domain -AccountPassword (ConvertTo-SecureString $generated_password -AsPlainText -Force) -PassThru | Enable-ADAccount 
 
     #Add users to appropriate group
-    foreach($group in $userObject.groups) {
-        Add-ADGroupMemeber -Idenity $group -Members $username
+    foreach($group_name in $userObject.groups) {
+
+        try {
+
+            Get-ADGroup -Identity "$group"
+            Add-ADGroupMemeber -Idenity $group -Members $username
+        }
+
+        catch [Microsoft.ActivbeDirectory.Management.ADIdentityNotFoundException]
+        {
+            Write-Warning "User $name NOT added to group $Group_name becasue it does not exist"
+        }
+        
     }
 }
 
