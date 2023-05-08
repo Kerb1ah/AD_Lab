@@ -1,8 +1,9 @@
 {
+    "domain": "xyz.local",
    "groups":[
     
     {
-        "name":"Engineering"
+        "name":"Employees"
     }
    ],
    
@@ -11,17 +12,23 @@
 
 
         { 
-            "First_name": "peter",
-            "Last_name": "King",
-            "Password":"Anything",
-            "username":"pking",
+            "name": "Alice Lice",
+            "Password":"P@$$w0rd789",        
+            "groups": [                
+            "Employees"
+         ]
+
+        },
         
-            "groups": [
-                
-            "Engineering"
+        { 
+            "name": "Bob Ob",
+            "Password":"P@$$w0rdABC",        
+            "groups": [                
+            "Employees"
          ]
 
         }
+
 
     ]
 

@@ -13,19 +13,18 @@ function CreateADUser(){
     param( [Parameter(Mandatory=$True)] $UserObject )
 
     #Pull out the name from the JSON object
-
     $name = $userObject.name
-    $firstname, $lastname =$name.split(" ")
-    $password = $userobject.password
+    $password = $userObject.password
 
     #Generate a first inital last name structure for username
-    $username = ($firstname[0] + $lastname.ToLower)
+    $firstname, $lastname=$name.split(" ")
+    $username = ($firstname[0] + $lastname).ToLower()
     $samAccountName = $username
-    $prinicipalname = $username
+    $principalname = $username
 
 
     #actually create AD user Onject
-    New-ADUser -Name "$name" -GivenName $firstname -Surname $lastname -SamAccountName $SamAccountName -UserPrincipalName $principalname@$Global:Domain -AccountPassword (ConvertTo-SecureString $generated_password -AsPlainText -Force) -PassThru | Enable-ADAccount 
+    New-ADUser -Name "$name" -GivenName $firstname -Surname $lastname -SamAccountName $SamAccountName -UserPrincipalName $principalname@$Global:Domain -AccountPassword (ConvertTo-SecureString $password -AsPlainText -Force) -PassThru | Enable-ADAccount 
 
     #Add users to appropriate group
     foreach($group_name in $userObject.groups) {
@@ -36,7 +35,7 @@ function CreateADUser(){
             Add-ADGroupMemeber -Idenity $group -Members $username
         }
 
-        catch [Microsoft.ActivbeDirectory.Management.ADIdentityNotFoundException]
+        catch [Microsoft.ActiveDirectory.Management.ADIdentityNotFoundException]
         {
             Write-Warning "User $name NOT added to group $Group_name becasue it does not exist"
         }
