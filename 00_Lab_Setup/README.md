@@ -7,3 +7,9 @@
 -Set both machines to template mode
 -Create Snapshot of both machines
 -Created new machines and named appropriately
+
+Create PS Session to server from Management Host
+
+```
+New-PSSession -Computername 192.168.204.253 -Credential (Get-credential)
+```
