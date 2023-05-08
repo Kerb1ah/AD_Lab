@@ -7,6 +7,7 @@
 
 # Add device to domain
 
-1. Using Pshell ```shell 
+1. Using Pshell
+```shell
 add-computer –domainname xyz.local -Credential (Get-credential) -restart –force
- ```
+```
