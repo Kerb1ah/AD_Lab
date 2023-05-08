@@ -18,3 +18,6 @@ Install-WindowsFeature AD-Domain-Services -IncludeManagementTools
 import-Module ADDSDeployment
 ```
 
+Set Domain to XYZ.Local
+
+
