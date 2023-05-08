@@ -17,7 +17,13 @@ Install-WindowsFeature AD-Domain-Services -IncludeManagementTools
 ```Shell
 import-Module ADDSDeployment
 ```
-
+```shell
+install-ADDSForest
+```
+```Shell
 Set Domain to XYZ.Local
+```
+
+Use Sconfig to reconfigure our DNS server IP to our own IP 192.168.204.253
 
 
