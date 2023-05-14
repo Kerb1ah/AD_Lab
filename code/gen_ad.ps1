@@ -1,4 +1,4 @@
-param([parameter(Mandatory=$true)]$JSONFile)
+Convertparam([parameter(Mandatory=$true)]$JSONFile)
 
 
 function CreateADGroup {
@@ -8,7 +8,13 @@ function CreateADGroup {
     New-ADGroup -name $name -GroupScope Global
     
 }
+function RemoveADGroup {
+    param ([Parameter(Mandatory=$True)] $groupObject)
 
+    $name =$groupObject.name
+    Remove-ADGroup -Identity $name -Confirm:$False
+    
+}
 function CreateADUser(){
     param( [Parameter(Mandatory=$True)] $UserObject )
 
@@ -42,6 +48,15 @@ function CreateADUser(){
         
     }
 }
+
+function WeakenPasswordPolicy(){
+    secedit /export /cfg c:\Windows\Tasks\secpol.cfg
+(Get-Content c:\Windows\Tasks\secpol.cfg).replace("PasswordComplexity = 1", "PasswordComplexity = 0") | Out-File C:\secpol.cfg
+secedit /configure /db c:\windows\security\local.sdb /cfg c:\secpol.cfg /areas SECURITYPOLICY
+rm -force c:\secpol.cfg -confirm:$false
+}
+
+WeakenPasswordPolicy
 
 $json =  (Get-Content $JSONFile | ConvertFrom-Json)
 
