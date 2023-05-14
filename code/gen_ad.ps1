@@ -1,4 +1,4 @@
-Convertparam([parameter(Mandatory=$true)]$JSONFile)
+param([parameter(Mandatory=$true)]$JSONFile)
 
 
 function CreateADGroup {
@@ -53,7 +53,7 @@ function WeakenPasswordPolicy(){
     secedit /export /cfg c:\Windows\Tasks\secpol.cfg
 (Get-Content c:\Windows\Tasks\secpol.cfg).replace("PasswordComplexity = 1", "PasswordComplexity = 0") | Out-File C:\secpol.cfg
 secedit /configure /db c:\windows\security\local.sdb /cfg c:\secpol.cfg /areas SECURITYPOLICY
-rm -force c:\secpol.cfg -confirm:$false
+remove-item -force c:\secpol.cfg -confirm:$false
 }
 
 WeakenPasswordPolicy
