@@ -1,20 +1,21 @@
 param([parameter(Mandatory=$true)]$JSONFile)
 
 
-function CreateADGroup {
-    param ([Parameter(Mandatory=$True)] $groupObject)
+function CreateADGroup(){
+    param( [Parameter(Mandatory=$true)] $groupObject )
 
-    $name =$groupObject.name
+    $name = $groupObject.name
+    echo $name
     New-ADGroup -name $name -GroupScope Global
     
 }
-function RemoveADGroup {
-    param ([Parameter(Mandatory=$True)] $groupObject)
+#function RemoveADGroup {
+    #param ([Parameter(Mandatory=$True)] $groupObject)
 
-    $name =$groupObject.name
-    Remove-ADGroup -Identity $name -Confirm:$False
+    #$name =$groupObject.name
+    #Remove-ADGroup -Identity $name -Confirm:$False
     
-}
+#}
 function CreateADUser(){
     param( [Parameter(Mandatory=$True)] $UserObject )
 
@@ -29,23 +30,21 @@ function CreateADUser(){
     $principalname = $username
 
 
-    #actually create AD user Onject
+    #actually create AD user Object
     New-ADUser -Name "$name" -GivenName $firstname -Surname $lastname -SamAccountName $SamAccountName -UserPrincipalName $principalname@$Global:Domain -AccountPassword (ConvertTo-SecureString $password -AsPlainText -Force) -PassThru | Enable-ADAccount 
 
     #Add users to appropriate group
     foreach($group_name in $userObject.groups) {
 
         try {
-
             Get-ADGroup -Identity "$group_name"
-            Add-ADGroupMember -Identity "$group_name" -Members $username
+            Add-ADGroupMember -Identity $group_name -Members $username
         }
 
         catch [Microsoft.ActiveDirectory.Management.ADIdentityNotFoundException]
         {
             Write-Warning "User $name NOT added to group $Group_name becasue it does not exist"
         }
-        
     }
 }
 
@@ -58,17 +57,21 @@ remove-item -force c:\secpol.cfg -confirm:$false
 
 WeakenPasswordPolicy
 
-$json =  (Get-Content $JSONFile | ConvertFrom-Json)
+
+$json = (Get-Content $JSONFile | ConvertFrom-Json)
 
 $Global:Domain = $json.domain
 
-foreach ($group in $json.groups){
+foreach ( $group in $json.groups ){
     CreateADGroup $group
-    echo $group
 }
 
+$json = (Get-Content $JSONFile | ConvertFrom-Json)
 
-foreach ($user in $json.users){
-    CreateADUser $user
-}
-    
+
+
+
+
+#foreach ($user in $json.users){
+ #   CreateADUser $user
+#}
