@@ -38,7 +38,7 @@ function CreateADUser(){
         try {
 
             Get-ADGroup -Identity "$group_name"
-            Add-ADGroupMember -Identity "$group" -Members $username
+            Add-ADGroupMember -Identity "$group_name" -Members $username
         }
 
         catch [Microsoft.ActiveDirectory.Management.ADIdentityNotFoundException]
@@ -64,6 +64,7 @@ $Global:Domain = $json.domain
 
 foreach ($group in $json.groups){
     CreateADGroup $group
+    echo $group
 }
 
 

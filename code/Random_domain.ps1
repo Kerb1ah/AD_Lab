@@ -33,6 +33,6 @@ for ($i = 0; $i -lt $num_users; $i++ ){
     $passwords.Remove($password)
 }
 
-echo @{"domain"="xyz.local"
+Write-Output @{"domain"="xyz.local"
 #"groups"=$groups
 "users" = $users} | ConvertTo-Json | Out-File $OutputJSONFile
