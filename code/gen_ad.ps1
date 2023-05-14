@@ -31,8 +31,8 @@ function CreateADUser(){
 
         try {
 
-            Get-ADGroup -Identity "$group"
-            Add-ADGroupMemeber -Idenity $group -Members $username
+            Get-ADGroup -Identity "$group_name"
+            Add-ADGroupMember -Identity "$group" -Members $username
         }
 
         catch [Microsoft.ActiveDirectory.Management.ADIdentityNotFoundException]
