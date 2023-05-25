@@ -1,4 +1,7 @@
-param([parameter(Mandatory=$true)]$JSONFile)
+param(
+    [parameter(Mandatory=$true)]$JSONFile,
+    [switch]$Undo
+    )
 
 
 function CreateADGroup(){
@@ -9,13 +12,14 @@ function CreateADGroup(){
     New-ADGroup -name $name -GroupScope Global
     
 }
-#function RemoveADGroup {
-    #param ([Parameter(Mandatory=$True)] $groupObject)
 
-    #$name =$groupObject.name
-    #Remove-ADGroup -Identity $name -Confirm:$False
+function RemoveADGroup {
+    param ([Parameter(Mandatory=$True)] $groupObject)
+
+    $name =$groupObject.name
+    Remove-ADGroup -Identity $name -Confirm:$False
     
-#}
+}
 function CreateADUser(){
     param( [Parameter(Mandatory=$True)] $UserObject )
 
@@ -48,30 +52,60 @@ function CreateADUser(){
     }
 }
 
+function RemoveADUser {
+    param ([Parameter(Mandatory=$True)] $userObject)
+
+    $name =$userObject.name
+    $firstname, $lastname=$name.split(" ")
+    $username = ($firstname[0] + $lastname).ToLower()
+    $samAccountName = $username
+    Remove-ADUser -Identity $samAccountName -Confirm:$False
+    
+}
+
 function WeakenPasswordPolicy(){
     secedit /export /cfg c:\Windows\Tasks\secpol.cfg
-(Get-Content c:\Windows\Tasks\secpol.cfg).replace("PasswordComplexity = 1", "PasswordComplexity = 0") | Out-File C:\secpol.cfg
+(Get-Content c:\Windows\Tasks\secpol.cfg).replace("PasswordComplexity = 1", "PasswordComplexity = 0").replace("MinimumpasswordLength = 7", "MinimumpasswordLength = 1") | Out-File C:\secpol.cfg
 secedit /configure /db c:\windows\security\local.sdb /cfg c:\secpol.cfg /areas SECURITYPOLICY
 remove-item -force c:\secpol.cfg -confirm:$false
 }
 
-WeakenPasswordPolicy
-
-
-$json = (Get-Content $JSONFile | ConvertFrom-Json)
-
-$Global:Domain = $json.domain
-
-foreach ( $group in $json.groups ){
-    CreateADGroup $group
+function StrengthenPasswordPolicy(){
+    secedit /export /cfg c:\Windows\Tasks\secpol.cfg
+(Get-Content c:\Windows\Tasks\secpol.cfg).replace("PasswordComplexity = 1", "PasswordComplexity = 0").replace("MinimumpasswordLength = 1", "MinimumpasswordLength = 7") | Out-File C:\secpol.cfg
+secedit /configure /db c:\windows\security\local.sdb /cfg c:\secpol.cfg /areas SECURITYPOLICY
+remove-item -force c:\secpol.cfg -confirm:$false
 }
 
 $json = (Get-Content $JSONFile | ConvertFrom-Json)
+$Global:Domain = $json.domain
+
+if(-not $undo) {
+    WeakenPasswordPolicy
+    foreach ( $group in $json.groups ){
+        CreateADGroup $group
+    }
+
+$json = (Get-Content $JSONFile | ConvertFrom-Json)
+
+foreach ($user in $json.users){
+        CreateADUser $user
+    }
+}else{
+
+    StrengthenPasswordPolicy
+    foreach ( $group in $json.groups ){
+        RemoveADGroup $group
+    }
+
+$json = (Get-Content $JSONFile | ConvertFrom-Json)
+
+    foreach ($user in $json.users){
+        RemoveADUser $user
+
+    }
+}
 
 
 
 
-
-#foreach ($user in $json.users){
- #   CreateADUser $user
-#}

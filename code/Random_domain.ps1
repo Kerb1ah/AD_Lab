@@ -16,7 +16,7 @@ $users = @()
 
 # Default UserCount set to 5 (if not set)
 if ( $UserCount -eq 0 ){
-    $UserCount = 5
+    $UserCount = 50
 }
 
 # Default GroupCount set to 5 (if not set)
