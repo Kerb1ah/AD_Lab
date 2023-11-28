@@ -14,10 +14,10 @@
 
 
         { 
-            "First_name": "peter",
-            "Last_name": "King",
+            "First_name": "joe",
+            "Last_name": "bloggs",
             "Password":"Anything",
-            "username":"pking",
+            "username":"jbloggs",
         
             "groups": [
                 
